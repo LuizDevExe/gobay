@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - ${GOBAY_DATABASE_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${GOBAY_DATABASE_USER}
+      POSTGRES_PASSWORD: ${GOBAY_DATABASE_PASSWORD}
+      POSTGRES_DB: ${GOBAY_DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgressql/data
+
+volumes:
+  db:
+    driver: local

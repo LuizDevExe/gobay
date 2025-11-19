@@ -1,0 +1,31 @@
+package user
+
+import (
+	"context"
+
+	"github.com/LuizDevExe/gobay/internal/validator"
+)
+
+type CreateUserReq struct {
+	UserName     string             `json:"user_name"`
+	Email        string             `json:"email"`
+	PasswordHash string             `json:"password_hash"`
+	Bio          string             `json:"bio"`
+}
+
+
+
+func (req CreateUserReq) Valid(ctx context.Context) validator.Evaluator{
+	var eval validator.Evaluator
+
+	eval.CheckField(validator.NotBlank(req.UserName), "user_name", "this field cannot be empty")
+	eval.CheckField(validator.NotBlank(req.Email), "email", "this field cannot be empty")
+	eval.CheckField(validator.Matches(req.Email, validator.EmailRX), "email", "must be a valid email")
+	eval.CheckField(validator.NotBlank(req.Bio), "bio", "this field cannot be empty")
+	eval.CheckField(
+		validator.Minchars(req.Bio, 10) &&
+			validator.MaxChars(req.Bio, 255), "bio", "This field must have a length between10 and 255")
+	
+	eval.CheckField(validator.Minchars(req.PasswordHash, 8),"password", "this field must be bigger than 8 chars")
+	return eval
+}
